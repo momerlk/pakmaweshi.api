@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"log"
 	"time"
 
-
 	"encoding/json"
+
 	jwt "github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -53,21 +55,16 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 		return
 	}
 
-	hashed , err := internal.HashAndSalt([]byte(body.Password))
-	if err != nil {
-		a.ServerError(w , "Sign Up" , err)
-		return
-	}
 
 
 	var user internal.User
-	ok , err := a.Database.Get(r.Context() , usersColl , bson.M{"username" : body.UsernameEmail} , user)
+	ok , err := a.Database.Get(r.Context() , usersColl , bson.D{{"username" , body.UsernameEmail}} , &user)
 	if err != nil {
-		a.ServerError(w , "Sign In" , err)
+		a.ServerError(w , "Sign In a.Database.Get()" , err)
 		return
 	}
 	if !ok {
-		ok , err := a.Database.Get(r.Context() , usersColl , bson.M{"email" : body.UsernameEmail} , user)
+		ok , err := a.Database.Get(r.Context() , usersColl , bson.D{{"email" , body.UsernameEmail}} , &user)
 		if !ok {
 			a.ClientError(w , http.StatusUnauthorized)
 			return
@@ -77,17 +74,20 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 			return
 		}
 	}
+	log.Println("user =" , user)
 
-	if hashed == user.Password {
+	if bcrypt.CompareHashAndPassword([]byte(user.Password) , []byte(body.Password)) == nil {
+		log.Println("user is authenticated")
 		// User is authenticated
 		secret := internal.Getenv("JWT_KEY")
+		log.Println("secret =" , secret)
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256 , jwt.MapClaims{
 			"user_id" : user.Id,
 			"session_id" : internal.GenerateId(),
-			"expiry" : time.Now().Add(4 * time.Hour),
+			"exp" : time.Now().Add(4 * time.Hour),
 		})
 
-		tokenString , err := token.SignedString(secret)
+		tokenString , err := token.SignedString([]byte(secret))
 		if err != nil {
 			a.ServerError(w , "Sign In" , err)
 			return
@@ -104,4 +104,37 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 		return
 	}
 
+}
+
+func (a *App) HandlePrivate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	tokenString := r.Header.Get("Authorization")
+	if tokenString == "" {
+		http.Error(w, "Authorization token missing", http.StatusUnauthorized)
+		return
+	}
+
+	// Parse the token
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		key := internal.Getenv("JWT_KEY")
+		return key , nil
+	})
+	if err != nil {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	// Check if the token is valid and not expired
+	if _, ok := token.Claims.(jwt.MapClaims); !ok || !token.Valid {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	// Token is valid, proceed with private data handling
+	privateData := "This is private information!"
+	w.Write([]byte(privateData))
 }
