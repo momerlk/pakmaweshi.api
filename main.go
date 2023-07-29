@@ -43,7 +43,6 @@ func main(){
 	mux.HandleFunc("/file", app.DownloadFile)
 	mux.HandleFunc("/signUp" , app.SignUp)
 	mux.HandleFunc("/signIn" , app.SignIn)
-	mux.HandleFunc("/private" , app.HandlePrivate)
 
 
 	http.ListenAndServe(":8080" , mux)

@@ -74,17 +74,15 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 			return
 		}
 	}
-	log.Println("user =" , user)
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password) , []byte(body.Password)) == nil {
 		log.Println("user is authenticated")
 		// User is authenticated
 		secret := internal.Getenv("JWT_KEY")
-		log.Println("secret =" , secret)
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256 , jwt.MapClaims{
 			"user_id" : user.Id,
 			"session_id" : internal.GenerateId(),
-			"exp" : time.Now().Add(4 * time.Hour),
+			"exp" : time.Now().Add(4 * time.Hour).Unix(),
 		})
 
 		tokenString , err := token.SignedString([]byte(secret))
@@ -106,35 +104,29 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 
 }
 
-func (a *App) HandlePrivate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
+func (a *App) Verify(w http.ResponseWriter , r *http.Request) bool {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
 		http.Error(w, "Authorization token missing", http.StatusUnauthorized)
-		return
+		return false
 	}
 
 	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		key := internal.Getenv("JWT_KEY")
-		return key , nil
+		return []byte(key) , nil
 	})
 	if err != nil {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
+		return false
 	}
 
 	// Check if the token is valid and not expired
 	if _, ok := token.Claims.(jwt.MapClaims); !ok || !token.Valid {
-		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return
+		http.Error(w, "Invalid token (expired)", http.StatusUnauthorized)
+		return false
 	}
 
-	// Token is valid, proceed with private data handling
-	privateData := "This is private information!"
-	w.Write([]byte(privateData))
+	return true
 }
+
