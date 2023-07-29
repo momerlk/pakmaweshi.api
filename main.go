@@ -1,9 +1,15 @@
 package main
 
 import (
+	"os"
+	"net/http"
+
+	
+
 	"pakmaweshi.api/handlers"
 	"pakmaweshi.api/internal"
-	"net/http"
+	
+	"github.com/rs/cors"
 )
 
 type HttpHandler func (w http.ResponseWriter , r *http.Request)
@@ -44,6 +50,17 @@ func main(){
 	mux.HandleFunc("/signUp" , app.SignUp)
 	mux.HandleFunc("/signIn" , app.SignIn)
 
+	handler := cors.New(cors.Options{
+		AllowedOrigins : []string{
+			"http://localhost:19006",
+			"http://192.168.18.6:19006",
+		},
+		AllowCredentials : true,
 
-	http.ListenAndServe(":8080" , mux)
+
+		Debug : true,
+	}).Handler(mux)
+
+	PORT := os.Getenv("PORT")
+	http.ListenAndServe(":" + PORT , handler)
 }
