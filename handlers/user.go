@@ -58,13 +58,13 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 
 
 	var user internal.User
-	ok , err := a.Database.Get(r.Context() , usersColl , bson.D{{"username" , body.UsernameEmail}} , &user)
+	ok , err := a.Database.Get(r.Context() , usersColl , bson.M{"username" :  body.UsernameEmail} , &user)
 	if err != nil {
 		a.ServerError(w , "Sign In a.Database.Get()" , err)
 		return
 	}
 	if !ok {
-		ok , err := a.Database.Get(r.Context() , usersColl , bson.D{{"email" , body.UsernameEmail}} , &user)
+		ok , err := a.Database.Get(r.Context() , usersColl , bson.M{"email" : body.UsernameEmail} , &user)
 		if !ok {
 			a.ClientError(w , http.StatusUnauthorized)
 			return
