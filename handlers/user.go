@@ -111,12 +111,14 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 
 }
 
-func (a *App) Verify(w http.ResponseWriter , r *http.Request) (*jwt.Token , bool) {
+func (a *App) Verify(w http.ResponseWriter , r *http.Request) (jwt.MapClaims , bool) {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
 		http.Error(w, "Authorization token missing", http.StatusUnauthorized)
 		return nil , false
 	}
+
+	var tokenClaims jwt.MapClaims
 
 	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -129,12 +131,14 @@ func (a *App) Verify(w http.ResponseWriter , r *http.Request) (*jwt.Token , bool
 	}
 
 	// Check if the token is valid and not expired
-	if _, ok := token.Claims.(jwt.MapClaims); !ok || !token.Valid {
+	if claims , ok := token.Claims.(jwt.MapClaims); !ok || !token.Valid {
 		http.Error(w, "Invalid token (expired)", http.StatusUnauthorized)
 		return nil , false
+	} else {
+		tokenClaims = claims
 	}
 
 
-	return token , true
+	return tokenClaims , true
 }
 
