@@ -65,6 +65,31 @@ func (d *Database) Get(ctx context.Context , collName string , filter interface{
 	return true , nil
 }
 
+func Get[T any](ctx context.Context, d *Database  , collName string , filter interface{}) ([]T , error){
+	var data []T
+	coll := d.mongoDB.Collection(collName)
+
+	cur , err := coll.Find(ctx , filter)
+	if cur.Err() != nil {
+		return data , nil
+	} 
+	if err != nil {
+		return data , err
+	}
+
+
+	for cur.Next(ctx) {
+		var item T
+		err = cur.Decode(&item)
+		if err != nil {
+			return data , err
+		}
+		data = append(data , item)
+	}
+
+	return data , nil
+}
+
 
 func (d *Database) StoreJPG(id string , data []byte) error {
 	opts := options.GridFSBucket().SetName("images")

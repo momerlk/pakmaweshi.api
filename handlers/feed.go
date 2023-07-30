@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"pakmaweshi.api/internal"
 )
 
@@ -16,8 +16,7 @@ func (a *App) Feed(w http.ResponseWriter , r *http.Request){
 	}
 	_ = claims["user_id"]
 
-	var posts internal.Product
-	ok , err := a.Database.Get(r.Context() , "products" , map[string]string{"" : ""} , &posts);
+	posts , err := internal.Get[internal.Product](r.Context() , &a.Database , "products" , bson.D{});
 	if err != nil {
 		a.ServerError(w , "Feed" , err)
 		return
@@ -26,8 +25,7 @@ func (a *App) Feed(w http.ResponseWriter , r *http.Request){
 		http.Error(w , "No Posts" , http.StatusExpectationFailed)
 		return
 	}
-
-	log.Println("posts =" , posts)
+	
 
 	json.NewEncoder(w).Encode(posts)
 

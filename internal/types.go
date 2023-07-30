@@ -17,6 +17,20 @@ type Product struct {
 	Images 			[]string				`json:"images" bson:"images"` // url of the images
 }
 
+type HiddenProduct struct {
+
+	Name 			string					`json:"name" bson:"name"`		
+	Description		string					`json:"description" bson:"description"`								
+	Price 			string					`json:"price" bson:"price"`
+	Location 		string					`json:"location" bson:"location"`
+	Contact 		string					`json:"contact" bson:"contact"`
+	
+	Avatar 			string					`json:"avatar" bson:"avatar"`
+	Username 		string					`json:"username" bson:"username"`  // username
+
+	Images 			[]string				`json:"images" bson:"images"` // url of the images
+}
+
 type User struct {
 	Id 				string 					`json:"id" bson:"id"` // user id 
 
