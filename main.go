@@ -52,8 +52,8 @@ func main(){
 
 	handler := cors.New(cors.Options{
 		AllowedOrigins : []string{
-			"http://localhost:19006",
-			"http://192.168.18.6:19006",
+			"http://localhost:19000",
+			"http://192.168.18.6:19000",
 		},
 		AllowCredentials : true,
 

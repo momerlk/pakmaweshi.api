@@ -4,7 +4,8 @@ package internal
 type Product struct {
 	Id				string 					`json:"id" bson:"id"`
 
-	Name 			string					`json:"name" bson:"name"`										
+	Name 			string					`json:"name" bson:"name"`		
+	Description		string					`json:"description" bson:"description"`								
 	Price 			string					`json:"price" bson:"price"`
 	Location 		string					`json:"location" bson:"location"`
 	Contact 		string					`json:"contact" bson:"contact"`

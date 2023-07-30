@@ -27,6 +27,8 @@ func (a *App) SignUp(w http.ResponseWriter , r *http.Request){
 		return
 	}
 
+	log.Println("password =" , body.Password)
+
 	body.Id = uuid.NewString()
 
 	hashed , err := internal.HashAndSalt([]byte(body.Password))
@@ -48,6 +50,11 @@ type SignInBody struct {
 	Password 					string 			`json:"password" bson:"password"`
 }
 func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
+	if r.Method != http.MethodPost {
+		http.Error(w , http.StatusText(http.StatusMethodNotAllowed)  , http.StatusMethodNotAllowed)
+		return
+	}
+
 	var body SignInBody
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
@@ -104,11 +111,11 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 
 }
 
-func (a *App) Verify(w http.ResponseWriter , r *http.Request) bool {
+func (a *App) Verify(w http.ResponseWriter , r *http.Request) (*jwt.Token , bool) {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
 		http.Error(w, "Authorization token missing", http.StatusUnauthorized)
-		return false
+		return nil , false
 	}
 
 	// Parse the token
@@ -118,15 +125,16 @@ func (a *App) Verify(w http.ResponseWriter , r *http.Request) bool {
 	})
 	if err != nil {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
-		return false
+		return nil , false
 	}
 
 	// Check if the token is valid and not expired
 	if _, ok := token.Claims.(jwt.MapClaims); !ok || !token.Valid {
 		http.Error(w, "Invalid token (expired)", http.StatusUnauthorized)
-		return false
+		return nil , false
 	}
 
-	return true
+
+	return token , true
 }
 
