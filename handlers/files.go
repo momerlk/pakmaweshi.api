@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 
-    "github.com/google/uuid"
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 
+	"io/ioutil"
 	"net/http"
-    "io/ioutil"
 )
 
 func (a *App) UploadFile(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +23,7 @@ func (a *App) UploadFile(w http.ResponseWriter, r *http.Request) {
     // FormFile returns the first file for the given key `myFile`
     // it also returns the FileHeader so we can get the Filename,
     // the Header and the size of the file
-    file, handler, err := r.FormFile("myFile")
+    file, handler, err := r.FormFile("file")
     if err != nil {
         log.Println("Error Retrieving the File")
         log.Println(err)
@@ -47,7 +49,7 @@ func (a *App) UploadFile(w http.ResponseWriter, r *http.Request) {
     a.Database.StoreJPG(id , fileBytes)
 
     // return that we have successfully uploaded our file!
-    w.Write([]byte(id))
+    json.NewEncoder(w).Encode(bson.M{"id" : id})
 }
 
 func (a *App) DownloadFile(w http.ResponseWriter , r *http.Request){

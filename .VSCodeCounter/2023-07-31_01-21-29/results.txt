@@ -1,0 +1,37 @@
+Date : 2023-07-31 01:21:29
+Directory : c:\Users\orgam\Documents\work\projects\pakmaweshi\api
+Total : 9 files,  400 codes, 11 comments, 143 blanks, all 554 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| Go             |          8 |        379 |         11 |        139 |        529 |
+| Go Module File |          1 |         21 |          0 |          4 |         25 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                       | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                          |          9 |        400 |         11 |        143 |        554 |
+| . (Files)                                                                  |          2 |         71 |          0 |         21 |         92 |
+| handlers                                                                   |          4 |        210 |         11 |         79 |        300 |
+| internal                                                                   |          3 |        119 |          0 |         43 |        162 |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                   | language       | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\go.mod               | Go Module File |         21 |          0 |          4 |         25 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\handlers\files.go    | Go             |         35 |          8 |         19 |         62 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\handlers\init.go     | Go             |         18 |          0 |          5 |         23 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\handlers\post.go     | Go             |         48 |          0 |         22 |         70 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\handlers\user.go     | Go             |        109 |          3 |         33 |        145 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\internal\database.go | Go             |         73 |          0 |         24 |         97 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\internal\structs.go  | Go             |         22 |          0 |          9 |         31 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\internal\util.go     | Go             |         24 |          0 |         10 |         34 |
+| c:\Users\orgam\Documents\work\projects\pakmaweshi\api\main.go              | Go             |         50 |          0 |         17 |         67 |
+| Total                                                                      |                |        400 |         11 |        143 |        554 |
++----------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

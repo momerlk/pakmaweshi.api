@@ -44,12 +44,14 @@ func main(){
 		Database: db,
 	}
 
-	mux.HandleFunc("/post" , app.CreatePost);
+	
 	mux.HandleFunc("/upload" , app.UploadFile);
 	mux.HandleFunc("/file", app.DownloadFile)
 	mux.HandleFunc("/signUp" , app.SignUp)
 	mux.HandleFunc("/signIn" , app.SignIn)
-
+	mux.HandleFunc("/feed" , app.Feed)
+	mux.HandleFunc("/post" , app.CreatePost);
+	
 	handler := cors.New(cors.Options{
 		AllowedOrigins : []string{
 			"http://localhost:19000",

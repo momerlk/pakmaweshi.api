@@ -42,6 +42,7 @@ func (a *App) CreatePost(w http.ResponseWriter , r *http.Request){
 	}
 
 	data.Username = user.Username
+	data.Avatar = user.Avatar
 
 
 	if r.Method != http.MethodPost {
