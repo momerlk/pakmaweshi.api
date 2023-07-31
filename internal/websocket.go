@@ -49,7 +49,7 @@ type WebSocket struct {
 	epoller 		*Epoll
 }
 
-func (socket *WebSocket) Init(onRead func(conn *WSConnection , data []byte)){
+func (socket *WebSocket)Init(mux *http.ServeMux, endpoint string, onRead func(ws *WebSocket, conn *WSConnection, data []byte) error){
 	// Start epoll
 	var err error
 	epoller, err := MkEpoll()
@@ -60,6 +60,8 @@ func (socket *WebSocket) Init(onRead func(conn *WSConnection , data []byte)){
 	socket.epoller = epoller;
 
 	go socket.Start(onRead)
+
+	mux.Handle(endpoint , socket)
 }
 
 func (socket *WebSocket) Send(userId string , data []byte) (bool , error) {
@@ -79,7 +81,7 @@ func (socket *WebSocket) Send(userId string , data []byte) (bool , error) {
 	return true , nil
 }
 
-func (socket *WebSocket) Start(onRead func(conn *WSConnection , data []byte)){
+func (socket *WebSocket) Start(onRead func(websocket *WebSocket, conn *WSConnection , data []byte) error ){
 	for {
 		connections, err := socket.epoller.Wait()
 		
@@ -97,7 +99,12 @@ func (socket *WebSocket) Start(onRead func(conn *WSConnection , data []byte)){
 				}
 				conn.NetConn.Close()
 			} else {
-				onRead(conn , msg)
+				err = onRead(socket , conn , msg)
+				if err != nil { 
+					log.Printf("failed socket.onRead , connection user id = %v\n" , conn.UserId)
+					conn.NetConn.Close()
+					continue
+				}
 			}
 		}
 	}
