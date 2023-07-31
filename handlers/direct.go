@@ -10,10 +10,12 @@ import (
 )
 
 
-func (a *App) Direct(conn net.Conn , data []byte) (err error) {
+func (a *App) Direct(conn *internal.WSConnection , data []byte) (err error) {
 	var direct internal.Direct
 
 	err = json.Unmarshal(data , &direct)
+
+	
 
 	return err
 }

@@ -15,10 +15,15 @@ type WSConnection struct {
 	UserId 				string 				// user id of the client
 }
 
+type Packet []byte
+
 type Epoll struct {
 	fd          int
 	connections map[int]*WSConnection
 	lock        *sync.RWMutex
+
+	Writers 	map[string]net.Conn
+	WriterLock	*sync.Mutex
 }
 
 func MkEpoll() (*Epoll, error) {
@@ -30,6 +35,7 @@ func MkEpoll() (*Epoll, error) {
 		fd:          fd,
 		lock:        &sync.RWMutex{},
 		connections: make(map[int]*WSConnection),
+		Writers : 	 make(map[string]net.Conn),
 	}, nil
 }
 
@@ -46,6 +52,7 @@ func (e *Epoll) Add(conn *WSConnection) error {
 	if len(e.connections)%100 == 0 {
 		log.Printf("Total number of connections: %v", len(e.connections))
 	}
+	e.Writers[conn.UserId] = conn.NetConn
 	return nil
 }
 
@@ -61,6 +68,7 @@ func (e *Epoll) Remove(conn *WSConnection) error {
 	if len(e.connections)%100 == 0 {
 		log.Printf("Total number of connections: %v", len(e.connections))
 	}
+	delete(e.Writers , conn.UserId)
 	return nil
 }
 
