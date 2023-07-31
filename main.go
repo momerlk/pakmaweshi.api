@@ -1,14 +1,14 @@
 package main
 
 import (
-	"os"
+	"log"
+	"net"
 	"net/http"
-
-	
+	"os"
 
 	"pakmaweshi.api/handlers"
 	"pakmaweshi.api/internal"
-	
+
 	"github.com/rs/cors"
 )
 
@@ -44,13 +44,19 @@ func main(){
 		Database: db,
 	}
 
-	
+	ws := &internal.WebSocket{};
+	ws.Init(func(conn net.Conn , data []byte) {
+		log.Println("onRead called")
+	});
+
+	mux.Handle("/test" , ws)
 	mux.HandleFunc("/upload" , app.UploadFile);
 	mux.HandleFunc("/file", app.DownloadFile)
 	mux.HandleFunc("/signUp" , app.SignUp)
 	mux.HandleFunc("/signIn" , app.SignIn)
 	mux.HandleFunc("/feed" , app.Feed)
 	mux.HandleFunc("/post" , app.CreatePost);
+
 	
 	handler := cors.New(cors.Options{
 		AllowedOrigins : []string{
@@ -64,5 +70,5 @@ func main(){
 	}).Handler(mux)
 
 	PORT := os.Getenv("PORT")
-	http.ListenAndServe(":" + PORT , handler)
+	http.ListenAndServe("localhost:" + PORT , handler)
 }

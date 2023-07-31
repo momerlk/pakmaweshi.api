@@ -3,11 +3,18 @@ module pakmaweshi.api
 go 1.18
 
 require (
+	github.com/gobwas/ws v1.2.1
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/cors v1.9.0
 	go.mongodb.org/mongo-driver v1.12.0
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
+	golang.org/x/sys v0.6.0
+)
+
+require (
+	github.com/gobwas/httphead v0.1.0 // indirect
+	github.com/gobwas/pool v0.2.1 // indirect
 )
 
 require (

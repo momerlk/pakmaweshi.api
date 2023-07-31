@@ -43,3 +43,14 @@ type User struct {
 	Email			string 					`json:"email" bson:"email"` // email
 	Password		string 					`json:"password" bson:"password"`	 // password
 }
+
+type Direct struct {
+	Id 				string 					`json:"id" bson:"id"` 					// message id
+
+	Sender 			string 					`json:"sender" bson:"sender"` 			// sender's user id
+	Receiver		string 					`json:"receiver" bson:"receiver"` 		// receiver's user id
+	Received 		bool					`json:"received" bson:"received"` 		// whether the message has been received or not
+
+	Content 		string 					`json:"content" bson:"content"` 	   // text content of the message
+	Attachment 		string 					`json:"attachment" bson:"attachment"` // file id of the attachment
+}
