@@ -71,7 +71,7 @@ func (socket *WebSocket) Send(userId string , data []byte) (bool , error) {
 	conn.Lock.Lock()
 	defer conn.Lock.Unlock()
 
-	err := wsutil.WriteClientBinary(conn.Conn , data)
+	err := wsutil.WriteServerText(conn.Conn , data)
 	if err != nil {
 		return false , err
 	}
@@ -97,10 +97,7 @@ func (socket *WebSocket) Start(onRead func(conn *WSConnection , data []byte)){
 				}
 				conn.NetConn.Close()
 			} else {
-				log.Printf("msg : %s" , string(msg))
 				onRead(conn , msg)
-				// This is commented out since in demo usage, stdout is showing messages sent from > 1M connections at very high rate
-				//log.Printf("msg: %s", string(msg))
 			}
 		}
 	}

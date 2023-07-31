@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -46,6 +47,8 @@ func main(){
 	ws := &internal.WebSocket{};
 	ws.Init(func(conn *internal.WSConnection , data []byte) {
 		log.Println("onRead called")
+		packet , _ := json.Marshal(app)
+		ws.Send(conn.UserId , packet)
 	});
 
 	mux.Handle("/test" , ws)
