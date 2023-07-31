@@ -45,7 +45,7 @@ func main(){
 	}
 
 	ws := &internal.WebSocket{};
-	ws.Init(func(conn net.Conn , data []byte) {
+	ws.Init(func(conn *internal.WSConnection , data []byte) {
 		log.Println("onRead called")
 	});
 

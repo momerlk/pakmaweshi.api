@@ -9,9 +9,15 @@ import (
 	"syscall"
 )
 
+// represents a single websocket connection
+type WSConnection struct {
+	NetConn 			net.Conn 			// underlying net connection
+	UserId 				string 				// user id of the client
+}
+
 type Epoll struct {
 	fd          int
-	connections map[int]net.Conn
+	connections map[int]*WSConnection
 	lock        *sync.RWMutex
 }
 
@@ -23,13 +29,13 @@ func MkEpoll() (*Epoll, error) {
 	return &Epoll{
 		fd:          fd,
 		lock:        &sync.RWMutex{},
-		connections: make(map[int]net.Conn),
+		connections: make(map[int]*WSConnection),
 	}, nil
 }
 
-func (e *Epoll) Add(conn net.Conn) error {
+func (e *Epoll) Add(conn *WSConnection) error {
 	// Extract file descriptor associated with the connection
-	fd := websocketFD(conn)
+	fd := websocketFD(conn.NetConn)
 	err := unix.EpollCtl(e.fd, syscall.EPOLL_CTL_ADD, fd, &unix.EpollEvent{Events: unix.POLLIN | unix.POLLHUP, Fd: int32(fd)})
 	if err != nil {
 		return err
@@ -43,8 +49,8 @@ func (e *Epoll) Add(conn net.Conn) error {
 	return nil
 }
 
-func (e *Epoll) Remove(conn net.Conn) error {
-	fd := websocketFD(conn)
+func (e *Epoll) Remove(conn *WSConnection) error {
+	fd := websocketFD(conn.NetConn)
 	err := unix.EpollCtl(e.fd, syscall.EPOLL_CTL_DEL, fd, nil)
 	if err != nil {
 		return err
@@ -58,7 +64,7 @@ func (e *Epoll) Remove(conn net.Conn) error {
 	return nil
 }
 
-func (e *Epoll) Wait() ([]net.Conn, error) {
+func (e *Epoll) Wait() ([]*WSConnection, error) {
 	events := make([]unix.EpollEvent, 100)
 	n, err := unix.EpollWait(e.fd, events, 100)
 	if err != nil {
@@ -66,7 +72,7 @@ func (e *Epoll) Wait() ([]net.Conn, error) {
 	}
 	e.lock.RLock()
 	defer e.lock.RUnlock()
-	var connections []net.Conn
+	var connections []*WSConnection
 	for i := 0; i < n; i++ {
 		conn := e.connections[int(events[i].Fd)]
 		connections = append(connections, conn)

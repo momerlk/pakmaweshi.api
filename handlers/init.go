@@ -14,10 +14,8 @@ type App struct {
 func (a *App) ServerError(w http.ResponseWriter , reqName string , err error){
 	log.Printf("%v : Internal Error encountered : %v" , reqName ,  err)	
 	http.Error(w , http.StatusText(http.StatusInternalServerError) , http.StatusInternalServerError)
-	return
 }
 
 func (a *App) ClientError(w http.ResponseWriter , code int) {
 	http.Error(w , http.StatusText(code) , code)
-	return
 }

@@ -111,7 +111,7 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 
 }
 
-func (a *App) Verify(w http.ResponseWriter , r *http.Request) (jwt.MapClaims , bool) {
+func Verify(w http.ResponseWriter , r *http.Request) (jwt.MapClaims , bool) {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
 		http.Error(w, "Authorization token missing", http.StatusUnauthorized)
