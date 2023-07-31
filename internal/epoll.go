@@ -15,6 +15,12 @@ type WSConnection struct {
 	UserId 				string 				// user id of the client
 }
 
+// represents a websocket connection writer
+type WSWriter struct {
+	Conn 				net.Conn
+	Lock 				*sync.Mutex
+}
+
 type Packet []byte
 
 type Epoll struct {
@@ -22,7 +28,7 @@ type Epoll struct {
 	connections map[int]*WSConnection
 	lock        *sync.RWMutex
 
-	Writers 	map[string]net.Conn
+	Writers 	map[string]WSWriter
 	WriterLock	*sync.Mutex
 }
 
@@ -35,7 +41,7 @@ func MkEpoll() (*Epoll, error) {
 		fd:          fd,
 		lock:        &sync.RWMutex{},
 		connections: make(map[int]*WSConnection),
-		Writers : 	 make(map[string]net.Conn),
+		Writers : 	 make(map[string]WSWriter),
 	}, nil
 }
 
@@ -52,7 +58,10 @@ func (e *Epoll) Add(conn *WSConnection) error {
 	if len(e.connections)%100 == 0 {
 		log.Printf("Total number of connections: %v", len(e.connections))
 	}
-	e.Writers[conn.UserId] = conn.NetConn
+	e.Writers[conn.UserId] = WSWriter{
+		Conn: conn.NetConn,
+		Lock : &sync.Mutex{},
+	}
 	return nil
 }
 

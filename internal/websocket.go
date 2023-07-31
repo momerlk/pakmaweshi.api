@@ -62,6 +62,22 @@ func (socket *WebSocket) Init(onRead func(conn *WSConnection , data []byte)){
 	go socket.Start(onRead)
 }
 
+func (socket *WebSocket) Send(userId string , data []byte) (bool , error) {
+	conn , ok := socket.epoller.Writers[userId]
+	if !ok {
+		return false , nil
+	}
+
+	conn.Lock.Lock()
+	defer conn.Lock.Unlock()
+
+	err := wsutil.WriteClientBinary(conn.Conn , data)
+	if err != nil {
+		return false , err
+	}
+
+	return true , nil
+}
 
 func (socket *WebSocket) Start(onRead func(conn *WSConnection , data []byte)){
 	for {
