@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"pakmaweshi.api/internal"
 )
 
@@ -22,7 +23,20 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 		return err
 	}
 
-	ok , err := ws.Send(direct.Receiver , data)
+	direct.Id = internal.GenerateId()
+	direct.Sender = conn.UserId
+	direct.Received = false
+
+	var receiver internal.User
+	ok , err := a.Database.Get(context.TODO() , "users" , bson.M{"username" : direct.Receiver} , &receiver)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return err
+	}
+
+	ok , err = ws.Send(receiver.Id , data)
 	if err != nil {
 		return err
 	}
