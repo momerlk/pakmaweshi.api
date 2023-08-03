@@ -45,6 +45,7 @@ func main(){
 
 	ws := &internal.WebSocket{};
 	ws.Init(mux , "/direct" , app.WSDirect);
+	mux.HandleFunc("/directs" , app.Directs);
 
 	mux.HandleFunc("/upload" , app.UploadFile);
 	mux.HandleFunc("/file", app.DownloadFile)
