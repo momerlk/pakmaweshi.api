@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"pakmaweshi.api/internal"
@@ -26,17 +27,9 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 	direct.Id = internal.GenerateId()
 	direct.Received = false
 
-	var sender internal.User
-	ok , err := a.Database.Get(context.TODO() , "users" , bson.M{"username" : conn.UserId} , &sender)
-	if err != nil {
-		return err
-	}
-	if !ok {
-		return err
-	}
 
 	var receiver internal.User
-	ok , err = a.Database.Get(context.TODO() , "users" , bson.M{"username" : direct.Receiver} , &receiver)
+	ok , err := a.Database.Get(context.TODO() , "users" , bson.M{"username" : direct.Receiver} , &receiver)
 	if err != nil {
 		return err
 	}
@@ -45,7 +38,9 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 	}
 
 	direct.Receiver = receiver.Id
-	direct.Sender = sender.Id
+	direct.Sender = conn.UserId
+
+	log.Printf("direct = %v\n" , direct)
 
 	newData , err := json.Marshal(direct)
 	if err != nil {

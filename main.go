@@ -63,7 +63,7 @@ func main(){
 		AllowCredentials : true,
 
 
-		Debug : true,
+		Debug : false,
 	}).Handler(mux)
 
 	PORT := os.Getenv("PORT")

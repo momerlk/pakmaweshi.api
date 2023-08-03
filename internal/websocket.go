@@ -101,7 +101,7 @@ func (socket *WebSocket) Start(onRead func(websocket *WebSocket, conn *WSConnect
 			} else {
 				err = onRead(socket , conn , msg)
 				if err != nil { 
-					log.Printf("failed socket.onRead , connection user id = %v\n" , conn.UserId)
+					log.Printf("failed socket.onRead , connection user id = %v, err = %v\n" , conn.UserId , err)
 					conn.NetConn.Close()
 					continue
 				}

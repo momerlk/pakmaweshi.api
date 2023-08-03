@@ -54,7 +54,7 @@ func (d *Database) Get(ctx context.Context , collName string , filter interface{
 	coll := d.mongoDB.Collection(collName)
 
 	res := coll.FindOne(ctx , filter)
-	if res.Err() != nil {
+	if res.Err() == mongo.ErrNoDocuments {
 		return false , nil
 	}
 	err := res.Decode(data)
@@ -70,8 +70,8 @@ func Get[T any](ctx context.Context, d *Database  , collName string , filter int
 	coll := d.mongoDB.Collection(collName)
 
 	cur , err := coll.Find(ctx , filter)
-	if cur.Err() != nil {
-		return data , nil
+	if cur.Err() == mongo.ErrNoDocuments {
+		return nil , nil
 	} 
 	if err != nil {
 		return data , err
