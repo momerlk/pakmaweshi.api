@@ -9,6 +9,10 @@ import (
 
 const directsColl =  "directs"
 
+type WSDirectMeta struct {
+	Received 			bool 			`json:"received" bson:"received"`
+}
+
 // websocket handler for directs
 func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , data []byte) (err error) {
 	var direct internal.Direct
@@ -22,14 +26,26 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 	if err != nil {
 		return err
 	}
+
 	if ok {
-		return err
+		direct.Received = true
+	} else {
+		direct.Received = false
 	}
 
 	err = a.Database.Store(context.TODO() , directsColl , direct)
 	if err != nil {
 		return err
 	}
+
+	meta , err := json.Marshal(WSDirectMeta{
+		Received: direct.Received,
+	})
+	if err != nil {
+		return err
+	}
+
+	ws.Send(direct.Sender , meta)
 
 	return err
 }
