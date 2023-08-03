@@ -24,17 +24,28 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 	}
 
 	direct.Id = internal.GenerateId()
-	direct.Sender = conn.UserId
 	direct.Received = false
 
-	var receiver internal.User
-	ok , err := a.Database.Get(context.TODO() , "users" , bson.M{"username" : direct.Receiver} , &receiver)
+	var sender internal.User
+	ok , err := a.Database.Get(context.TODO() , "users" , bson.M{"username" : conn.UserId} , &sender)
 	if err != nil {
 		return err
 	}
 	if !ok {
 		return err
 	}
+
+	var receiver internal.User
+	ok , err = a.Database.Get(context.TODO() , "users" , bson.M{"username" : direct.Receiver} , &receiver)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return err
+	}
+
+	direct.Receiver = receiver.Id
+	direct.Sender = sender.Id
 
 	newData , err := json.Marshal(direct)
 	if err != nil {
