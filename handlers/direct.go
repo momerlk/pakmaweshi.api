@@ -36,7 +36,12 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 		return err
 	}
 
-	ok , err = ws.Send(receiver.Id , data)
+	newData , err := json.Marshal(direct)
+	if err != nil {
+		return err
+	}
+
+	ok , err = ws.Send(receiver.Id , newData)
 	if err != nil {
 		return err
 	}
