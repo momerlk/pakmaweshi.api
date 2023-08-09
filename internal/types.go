@@ -54,3 +54,16 @@ type Direct struct {
 	Content 		string 					`json:"content" bson:"content"` 	   // text content of the message
 	Attachment 		string 					`json:"attachment" bson:"attachment"` // file id of the attachment
 }
+
+type RenderedDirect struct {
+	Content 		string 					`json:"content" bson:"content"`
+	TimeSent 		string 					`json:"time_sent" bson:"time_sent"`
+	Sent 			bool					`json:"sent"`
+}
+
+type RenderedChat struct {
+	Name 			string					`json:"name"`
+	Username 		string					`json:"username"`
+	Avatar 			string					`json:"avatar"`
+	Messages 		[]RenderedDirect 		`json:"messages"`
+}

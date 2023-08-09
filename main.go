@@ -54,6 +54,8 @@ func main(){
 	mux.HandleFunc("/feed" , app.Feed)
 	mux.HandleFunc("/post" , app.CreatePost);
 
+	mux.HandleFunc("/chats", app.Chats)
+
 	
 	handler := cors.New(cors.Options{
 		AllowedOrigins : []string{
