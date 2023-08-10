@@ -1,7 +1,7 @@
 package main
 
 import (
-
+	"log"
 	"net/http"
 	"os"
 
@@ -69,5 +69,9 @@ func main(){
 	}).Handler(mux)
 
 	PORT := os.Getenv("PORT")
-	http.ListenAndServe("localhost:" + PORT , handler)
+	log.Println("Running and serving on PORT" , PORT)
+	err :=  http.ListenAndServe("localhost:" + PORT , handler)
+	if err != nil {
+		log.Println("failed to serve http , err =" , err)
+	}	
 }

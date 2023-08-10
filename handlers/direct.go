@@ -40,7 +40,7 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 	direct.Receiver = receiver.Id
 	direct.Sender = conn.UserId
 
-	log.Printf("direct = %v\n" , direct)
+	log.Printf("WSDirect : direct = %v\n" , direct)
 
 	newData , err := json.Marshal(direct)
 	if err != nil {

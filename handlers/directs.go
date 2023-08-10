@@ -69,6 +69,8 @@ func (a *App) Chats(w http.ResponseWriter , r *http.Request){
 			user = direct.Sender
 		}
 
+		log.Println("data =" ,data)
+
 		if _ , ok := users[user]; !ok {
 			var userData internal.User
 			ok , err := a.Database.Get(r.Context() , "users" , bson.M{"id" : user}, &userData)

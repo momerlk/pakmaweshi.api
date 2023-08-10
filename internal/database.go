@@ -30,7 +30,6 @@ func (d *Database) Init() {
 	}
 	dbName := os.Getenv("MONGODB_DBNAME")
 
-	log.Printf("URI = %v , NAME = %v\n" , uri , dbName)
 
 
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
