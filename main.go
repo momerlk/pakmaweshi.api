@@ -51,7 +51,10 @@ func main(){
 	mux.HandleFunc("/file", app.DownloadFile)
 	mux.HandleFunc("/signUp" , app.SignUp)
 	mux.HandleFunc("/signIn" , app.SignIn)
+
 	mux.HandleFunc("/feed" , app.Feed)
+	mux.HandleFunc("/dash" , app.Dash)
+
 	mux.HandleFunc("/post" , app.CreatePost);
 
 	mux.HandleFunc("/chats", app.Chats)
