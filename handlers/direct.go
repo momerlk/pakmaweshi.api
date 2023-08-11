@@ -63,14 +63,14 @@ func (a *App) WSDirect(ws *internal.WebSocket , conn *internal.WSConnection , da
 		return err
 	}
 
-	meta , err := json.Marshal(WSDirectMeta{
-		Received: direct.Received,
-	})
-	if err != nil {
-		return err
-	}
+	// meta , err := json.Marshal(WSDirectMeta{
+	// 	Received: direct.Received,
+	// })
+	// if err != nil {
+	// 	return err
+	// }
 
-	ws.Send(direct.Sender , meta)
+	// ws.Send(direct.Sender , meta)
 
 	return err
 }

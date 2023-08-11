@@ -64,12 +64,11 @@ func (a *App) Chats(w http.ResponseWriter , r *http.Request){
 		user := ""
 
 		if data.Sent {
-			user = userId
+			user = direct.Receiver
 		} else {
 			user = direct.Sender
 		}
 
-		log.Println("data =" ,data)
 
 		if _ , ok := users[user]; !ok {
 			var userData internal.User
@@ -86,12 +85,16 @@ func (a *App) Chats(w http.ResponseWriter , r *http.Request){
 				Name: userData.Name,
 				Username: userData.Username,
 				Avatar : userData.Avatar,
-				Messages: []internal.RenderedDirect{data},
+				Messages: []internal.RenderedDirect{},
 			}
 
+			v := users[user]
+			v.Messages = append(v.Messages, data)
+			users[user] = v
 		} else {
 			v  := users[user]
 			v.Messages = append(v.Messages, data)
+			users[user] = v
 		}
 
 		
@@ -99,6 +102,7 @@ func (a *App) Chats(w http.ResponseWriter , r *http.Request){
 
 	for key , data := range users {
 		log.Println("key =" ,key)
+		log.Println("final data =" , data)
 		rendered = append(rendered, data)
 	}
 	
