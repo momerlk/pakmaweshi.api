@@ -77,7 +77,7 @@ func main(){
 
 	PORT := os.Getenv("PORT")
 	log.Println("Running and serving on PORT" , PORT)
-	err :=  http.ListenAndServe("localhost:" + PORT , handler)
+	err :=  http.ListenAndServe("0.0.0.0:" + PORT , handler)
 	if err != nil {
 		log.Println("failed to serve http , err =" , err)
 	}	
