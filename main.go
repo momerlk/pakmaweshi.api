@@ -54,6 +54,7 @@ func main(){
 
 	mux.HandleFunc("/feed" , app.Feed)
 	mux.HandleFunc("/dash" , app.Dash)
+	mux.HandleFunc("/details" , app.Details)
 
 	mux.HandleFunc("/post" , app.CreatePost);
 

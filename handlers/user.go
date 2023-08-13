@@ -142,3 +142,20 @@ func Verify(w http.ResponseWriter , r *http.Request) (jwt.MapClaims , bool) {
 	return tokenClaims , true
 }
 
+
+func (a *App) Details(w http.ResponseWriter , r *http.Request){
+	claims , ok := internal.Verify(w , r)
+	if !ok {
+		return
+	}
+
+	userId := claims["user_id"]
+
+	var user internal.User
+	a.Database.Get(r.Context() , usersColl , bson.M{"id" : userId} , &user)
+
+	user.Password = ""
+	user.Id = ""
+
+	json.NewEncoder(w).Encode(user)
+}
