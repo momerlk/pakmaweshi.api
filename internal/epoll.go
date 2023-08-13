@@ -55,7 +55,7 @@ func (e *Epoll) Add(conn *WSConnection) error {
 	e.lock.Lock()
 	defer e.lock.Unlock()
 	e.connections[fd] = conn
-	if len(e.connections)%100 == 0 {
+	if true {
 		log.Printf("Total number of connections: %v", len(e.connections))
 	}
 	e.Writers[conn.UserId] = WSWriter{
