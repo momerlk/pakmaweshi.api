@@ -49,6 +49,10 @@ type SignInBody struct {
 	UsernameEmail	 			string 			`json:"username_email" bson:"username_email"` 			// username or email
 	Password 					string 			`json:"password" bson:"password"`
 }
+type SignInResp struct {
+	Token 						string 			`json:"token" bson:"token"`
+	internal.User
+}
 func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 	if r.Method != http.MethodPost {
 		http.Error(w , http.StatusText(http.StatusMethodNotAllowed)  , http.StatusMethodNotAllowed)
@@ -98,7 +102,12 @@ func (a *App) SignIn(w http.ResponseWriter , r *http.Request){
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(bson.M{"token" : tokenString})
+
+		user.Password = ""
+		user.Id = ""
+
+
+		err = json.NewEncoder(w).Encode(SignInResp{Token : tokenString , User : user})
 		if err != nil {
 			a.ServerError(w , "Sign In" , err)
 			return
